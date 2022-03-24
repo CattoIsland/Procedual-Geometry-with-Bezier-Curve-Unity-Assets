@@ -1,4 +1,4 @@
-Shader "Unlit/animaedThing"
+Shader "Unlit/animatedThing"
 {
     Properties
     {
@@ -46,6 +46,8 @@ Shader "Unlit/animaedThing"
             {
                 v2f o;
 
+
+                //Sine Wave Animation on Generated Geometry written into Shader
                 float wave = sin(v.uv.x * TAU * 8 + _Time.y) * v.uv.y * _WaveAmp;
                  
                 v.vertex.z += wave; 
