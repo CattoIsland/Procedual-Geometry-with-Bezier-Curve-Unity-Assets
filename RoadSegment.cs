@@ -2,10 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 
 [RequireComponent(typeof(MeshFilter))]
 public class RoadSegment : MonoBehaviour
 {
+
+    [SerializeField] Mesh2d shape2D;
+
     [Range(0,1)]
     [SerializeField] float tTest = 0;
     [SerializeField] Transform[] controlPoints = new Transform[4];
@@ -31,19 +35,33 @@ public class RoadSegment : MonoBehaviour
         OrientedPoint testPoint = GetBezierPoint(tTest);
         Handles.PositionHandle(testPoint.pos, testPoint.rot);
 
-        float radius = 0.05f;
+        float radius = 0.1f;
 
 
         void DrawPoint( Vector2 localPos) => Gizmos.DrawSphere(testPoint.LocalToWorld( localPos), radius);
 
+        //this uses Linq 
+        Vector3[] verts = shape2D.vertices.Select(v => testPoint.LocalToWorld(v.point)).ToArray();
 
-        DrawPoint(Vector3.zero);
-        DrawPoint(Vector3.right * 0.2f);
-        DrawPoint(Vector3.right * 0.1f);
-        DrawPoint(Vector3.right * -0.1f);
-        DrawPoint(Vector3.right * -0.2f);
-        DrawPoint(Vector3.up * 0.1f);
-        DrawPoint(Vector3.up * 0.2f);
+        for (int i = 0; i < shape2D.lineIndices.Length; i+=2) {
+
+            Vector3 a = verts[shape2D.lineIndices[i]];
+            Vector3 b = verts[shape2D.lineIndices[i+1]];
+
+            Gizmos.DrawLine(a, b);
+
+
+            DrawPoint(shape2D.vertices[i].point);
+
+                }
+
+        //DrawPoint(Vector3.zero);
+        //DrawPoint(Vector3.right * 0.2f);
+        //DrawPoint(Vector3.right * 0.1f);
+      //  DrawPoint(Vector3.right * -0.1f);
+    //    DrawPoint(Vector3.right * -0.2f);
+  //      DrawPoint(Vector3.up * 0.1f);
+//        DrawPoint(Vector3.up * 0.2f);
 
         Gizmos.color = Color.white;
 
